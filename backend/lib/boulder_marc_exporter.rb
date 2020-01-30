@@ -65,7 +65,7 @@ class MARCSerializer < ASpaceExport::Serializer
             df.subfields.each do |sf|
 
               xml.subfield(:code => sf.code){
-                xml.text sf.text.gsub(/<[^>]*>/, ' ')
+                xml.text sf.text.gsub(/<[^>]*>/, '')
               }
             end
           }
