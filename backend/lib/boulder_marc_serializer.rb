@@ -77,8 +77,7 @@ class BoulderMARCSerializer
 
 
     # link to the PUI for each resource in lieu of ASpace's default FA locations
-    fields << DataField.new('856', '4', '2').with_sfs(['z', "Finding Aid (via ArchivesSpace)"], ['u', "https://archives.colorado.edu#{@record.aspace_record.uri}"])
-
+    fields << DataField.new('856', '4', '2').with_sfs(['z', "Finding Aid (via ArchivesSpace)"], ['u', "https://archives.colorado.edu#{@record.@resource.ead_location}"])
     # add OCLC numbers in MARC 035
     # if @record.aspace_record.has_key?('user_defined')
     #   if @record.aspace_record['user_defined'].has_key?('string_3')
