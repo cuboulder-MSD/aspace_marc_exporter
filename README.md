@@ -3,7 +3,7 @@ This code borrows heavily from a similar plugin created by Kevin Clair for DU.
 
 # Local
 
-We use local plugins to customize the look and feel of the University of Colorado Boulder ArchivesSpace staff interface, and to provide validations for data properties above and beyond what ArchivesSpace provides by default.
+We use local plugins to customize the marc export beyond what ArchivesSpace provides by default.
 
 In each section of the code, changes made by the plugins are commented with descriptions of what each change sets out to do.
 
