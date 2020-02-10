@@ -9,7 +9,7 @@ class MARCModel < ASpaceExport::ExportModel
     :notes => :handle_notes,
     # :finding_aid_description_rules => df_handler('fadr', '040', ' ', ' ', 'e'),
     # :id_0 => :handle_voyager_id,
-    :id => :handle_ref,
+    # :id => :handle_ref,
     :ead_location => :handle_ead_loc
 }
 
@@ -47,7 +47,7 @@ class MARCModel < ASpaceExport::ExportModel
                                   )
     end
   end
-
+###
 
 
   def handle_repo_code(repository, *finding_aid_language)
@@ -62,11 +62,11 @@ class MARCModel < ASpaceExport::ExportModel
 
     df('049', ' ', ' ').with_sfs(['a', 'CODE'])
   end
-
+###
   def handle_languages(lang_materials)
     nil
   end
-
+###
 def handle_language(langcode)
   #blocks output of 041
 end
@@ -98,7 +98,7 @@ def handle_extents(extents)
   end
 end
 
-
+###
 
 def handle_id(*ids)
   ids.reject!{|i| i.nil? || i.empty? }
