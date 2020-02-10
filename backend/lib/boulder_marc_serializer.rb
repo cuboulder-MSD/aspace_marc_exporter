@@ -57,8 +57,8 @@ class BoulderMARCSerializer
     @record.controlfields = cf
   end
 
-  def datafields
-    fields = []
+#   def datafields
+#     fields = []
 
     # hard-coded RDA 33X defaults
     # (to one day customize based on indicated form/genre, but we're copping out for now)
@@ -74,13 +74,13 @@ class BoulderMARCSerializer
     #     end
     #   end
     # end
-    def handle_ead_loc(ead_loc)
-      if ead_loc && !ead_loc.empty?
-        fields << DataField.new('856', '4', '2').with_sfs(['z', "Finding Aid (via ArchivesSpace)"], ['u', "#{@resource.ead_location}"])
-      elsif ead_loc.nil?
-        fields << DataField.new('856', '4', '2').with_sfs(['z', "Finding Aid (via ArchivesSpace)"], ['u', "https://archives.colorado.edu#{@record.aspace_record.uri}"])
-      end
-    end
+#     def handle_ead_loc(ead_loc)
+#       if ead_loc && !ead_loc.empty?
+#         fields << DataField.new('856', '4', '2').with_sfs(['z', "Finding Aid (via ArchivesSpace)"], ['u', "#{@resource.ead_location}"])
+#       elsif ead_loc.nil?
+#         fields << DataField.new('856', '4', '2').with_sfs(['z', "Finding Aid (via ArchivesSpace)"], ['u', "https://archives.colorado.edu#{@record.aspace_record.uri}"])
+#       end
+#     end
 
     # link to the PUI for each resource in lieu of ASpace's default FA locations
 #     fields << DataField.new('856', '4', '2').with_sfs(['z', "Finding Aid (via ArchivesSpace)"], ['u', "https://archives.colorado.edu#{@record.@resource.ead_location}"])
@@ -93,7 +93,7 @@ class BoulderMARCSerializer
     #   end
     # end
 
-    result = (@record.datafields + fields)
-  end
+#     result = (@record.datafields + fields)
+#   end
 
 end
