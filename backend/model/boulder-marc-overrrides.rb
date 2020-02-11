@@ -10,14 +10,14 @@ class MARCModel < ASpaceExport::ExportModel
     # :finding_aid_description_rules => df_handler('fadr', '040', ' ', ' ', 'e'),
     # :id_0 => :handle_voyager_id,
     # :id => :handle_ref,
-    :ead_location => :handle_ead_loc
+    [:ead_location, :uri] => :handle_ead_loc
 }
 
 
   def self.from_resource(obj, opts={})
     marc = self.from_archival_object(obj,opts)
     marc.apply_map(obj, @resource_map)
-    marc.leader_string = "00000npcaa2200000la 4500"
+    marc.leader_string = "00000npmaa2200000la 4500"
     marc.leader_string[7] = obj.level == 'item' ? 'm' : 'c'
 
     marc.controlfield_string = assemble_controlfield_string(obj)
@@ -38,13 +38,18 @@ class MARCModel < ASpaceExport::ExportModel
   #    string
   # end
 
-  def handle_ead_loc(ead_loc)
+  def handle_ead_loc(ead_loc, ead_uri)
     if ead_loc && !ead_loc.empty?
 
       df('856', '4', '2').with_sfs(
                                     ['z', "Finding aid (via ArchivesSpace)"],
                                     ['u', ead_loc]
                                   )
+      else
+        df('856', '4', '2').with_sfs(
+                                      ['z', "Finding aid (via ArchivesSpace)"],
+                                      ['u', "https://archives.colorado.edu"+ead_uri]
+                                    )
     end
   end
 ###
