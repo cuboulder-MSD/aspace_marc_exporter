@@ -1,4 +1,4 @@
-This code borrows heavily from a similar plugin created by Kevin Clair for DU.
+This code is derived from a similar plugin created by Kevin Clair for DU.
 
 
 # Local
