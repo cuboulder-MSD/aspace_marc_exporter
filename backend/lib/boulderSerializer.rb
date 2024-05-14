@@ -33,6 +33,7 @@ class BoulderMARCSerializer
     # Do this on all records
     extra_fields << add_024_tag
     extra_fields << add_035_tag
+    extra_fields << add_506_tag
 
     # Only process the 853, 863 and 949 if the records is from tamwag, fales, nyuarchives, or Poly Archives
     if(get_allowed_values.has_key?(get_record_repo_value)) then
@@ -117,6 +118,8 @@ class BoulderMARCSerializer
     cf.add_controlfield_tag
   end
 
+  
+
   def add_003_tag(org_code)
     controlfield_hsh = get_controlfield_hash('003',org_code)
     cf = BoulderCustomTag.new(controlfield_hsh)
@@ -137,6 +140,15 @@ class BoulderMARCSerializer
     subfields_hsh = {}
     datafield_hsh = get_datafield_hash('035','','')
     subfields_hsh[1] = get_subfield_hash('a',value)
+    datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
+    datafield.add_datafield_tag
+  end
+
+  def add_506_tag
+    value = "Collection is open for research use."
+    subfields_hsh = {}
+    datafield_hsh = get_datafield_hash('506','0','')
+    subfields_hsh[1] = get_subfield_hash('a', value)
     datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
     datafield.add_datafield_tag
   end
