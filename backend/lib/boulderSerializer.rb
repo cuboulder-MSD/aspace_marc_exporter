@@ -18,11 +18,11 @@ class BoulderMARCSerializer
 
   def controlfields
     cf = []
-    org_codes = %w(NNU-TL NNU-F NyNyUA NyNyUAD NyNyUCH NBPol NyBlHS NHi)
-    org_code = get_repo_org_code
-    cf << add_003_tag(org_code) if org_codes.include?(org_code)
-    cf << add_005_tag
-    @record.controlfields = cf
+    # org_codes = %w(NNU-TL NNU-F NyNyUA NyNyUAD NyNyUCH NBPol NyBlHS NHi)
+    # org_code = get_repo_org_code
+    # cf << add_003_tag(org_code) if org_codes.include?(org_code)
+    # cf << add_005_tag
+    # @record.controlfields = cf
   end
 
   def datafields
@@ -31,27 +31,29 @@ class BoulderMARCSerializer
     @field_pairs = []
 
     # Do this on all records
-    extra_fields << add_024_tag
-    extra_fields << add_035_tag
+    # extra_fields << add_024_tag
+    # extra_fields << add_035_tag
+    extra_fields << add_043_tag
     extra_fields << add_506_tag
-    extra_fields << add_710_tag
     extra_fields << add_655_tag
+    extra_fields << add_710_tag
+    
 
     # Only process the 853, 863 and 949 if the records is from tamwag, fales, nyuarchives, or Poly Archives
-    if(get_allowed_values.has_key?(get_record_repo_value)) then
-      extra_fields << add_853_tag
-      if @record.aspace_record['top_containers']
-        top_containers = @record.aspace_record['top_containers']
-        top_containers.each_key{ |id|
-          info = top_containers[id]
-          loc = info[:location]
-          if(info[:barcode] != nil && loc != nil && /Flat file/.match?(loc) != true && /Flat File/.match?(loc) != true ) then
-            @field_pairs << add_863_tag(info)
-            @field_pairs << add_949_tag(info)
-          end
-        }
-      end
-    end
+    # if(get_allowed_values.has_key?(get_record_repo_value)) then
+    #   extra_fields << add_853_tag
+    #   if @record.aspace_record['top_containers']
+    #     top_containers = @record.aspace_record['top_containers']
+    #     top_containers.each_key{ |id|
+    #       info = top_containers[id]
+    #       loc = info[:location]
+    #       if(info[:barcode] != nil && loc != nil && /Flat file/.match?(loc) != true && /Flat File/.match?(loc) != true ) then
+    #         @field_pairs << add_863_tag(info)
+    #         @field_pairs << add_949_tag(info)
+    #       end
+    #     }
+    #   end
+    # end
 
     @sort_combined = (@record.datafields + extra_fields).sort_by(&:tag)
     # 863 and 949 pairs are not to be sorted
@@ -113,20 +115,21 @@ class BoulderMARCSerializer
   end
 
 
-  def add_005_tag
-    value = format_timestamp
-    controlfield_hsh = get_controlfield_hash('005',value)
-    cf = BoulderCustomTag.new(controlfield_hsh)
-    cf.add_controlfield_tag
-  end
+  # def add_005_tag
+  #   value = format_timestamp
+  #   controlfield_hsh = get_controlfield_hash('005',value)
+  #   cf = BoulderCustomTag.new(controlfield_hsh)
+  #   cf.add_controlfield_tag
+  # end
 
   
 
-  def add_003_tag(org_code)
-    controlfield_hsh = get_controlfield_hash('003',org_code)
-    cf = BoulderCustomTag.new(controlfield_hsh)
-    cf.add_controlfield_tag
-  end
+  # def add_003_tag(org_code)
+  #   controlfield_hsh = get_controlfield_hash('003',org_code)
+  #   cf = BoulderCustomTag.new(controlfield_hsh)
+  #   cf.add_controlfield_tag
+  # end
+
   def add_024_tag
     subfields_hsh = {}
     value = "(#{get_repo_org_code})#{check_multiple_ids}"
@@ -145,6 +148,16 @@ class BoulderMARCSerializer
     datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
     datafield.add_datafield_tag
   end
+
+  def add_043_tag
+    subfields_hsh = {}
+    datafield_hsh = get_datafield_hash('043',' ',' ')
+    subfields_hsh[1] = get_subfield_hash('a', "")
+    datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
+    datafield.add_datafield_tag
+  end
+
+
 
   def add_506_tag
     value = "Collection is open for research use."
@@ -179,67 +192,67 @@ class BoulderMARCSerializer
     datafield.add_datafield_tag
   end
 
-  def add_853_tag
-    subfields_hsh = {}
-    datafield_hsh = get_datafield_hash('853','0','0')
-    # have to have a hash by position as the key
-    # since the subfield positions matter
-    subfields_hsh[1] = get_subfield_hash('8','1')
-    subfields_hsh[2] = get_subfield_hash('a','Box')
-    datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
-    datafield.add_datafield_tag
-  end
+  # def add_853_tag
+  #   subfields_hsh = {}
+  #   datafield_hsh = get_datafield_hash('853','0','0')
+  #   # have to have a hash by position as the key
+  #   # since the subfield positions matter
+  #   subfields_hsh[1] = get_subfield_hash('8','1')
+  #   subfields_hsh[2] = get_subfield_hash('a','Box')
+  #   datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
+  #   datafield.add_datafield_tag
+  # end
 
-  def add_863_tag(info)
-    subfields_hsh = {}
-    datafield_hsh = get_datafield_hash('863','','')
-    # have to have a hash by position as the key
-    # since the subfield positions matter
-    subfields_hsh[1] = get_subfield_hash('8',"1.#{info[:indicator]}")
-    subfields_hsh[2] = get_subfield_hash('a',info[:indicator])
-    subfields_hsh[3] = get_subfield_hash('p',info[:barcode]) if info[:barcode]
-    datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
-    datafield.add_datafield_tag
-  end
+  # def add_863_tag(info)
+  #   subfields_hsh = {}
+  #   datafield_hsh = get_datafield_hash('863','','')
+  #   # have to have a hash by position as the key
+  #   # since the subfield positions matter
+  #   subfields_hsh[1] = get_subfield_hash('8',"1.#{info[:indicator]}")
+  #   subfields_hsh[2] = get_subfield_hash('a',info[:indicator])
+  #   subfields_hsh[3] = get_subfield_hash('p',info[:barcode]) if info[:barcode]
+  #   datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
+  #   datafield.add_datafield_tag
+  # end
 
-  def add_949_tag(info)
+  # def add_949_tag(info)
 
-    subfields_hsh = {}
-    datafield_hsh = get_datafield_hash('949','0','')
-    # have to have a hash by position as the key
-    # since the subfield positions matter
-    subfields_hsh[1] = get_subfield_hash('a','NNU')
-    subfields_hsh[4] = get_subfield_hash('t','4')
-    subfields_hsh[5] = generate_subfield_j
-    subfields_hsh[6] = get_subfield_hash('m','MIXED')
-    subfields_hsh[7] = get_subfield_hash('i','04')
-    subfields_hsh[8] = get_location(info[:location])
-    subfields_hsh[9] = get_subfield_hash('p',info[:barcode]) if info[:barcode]
-    subfields_hsh[10] = get_subfield_hash('w',"Box #{info[:indicator]}")
-    subfields_hsh[11] = get_subfield_hash('e',info[:indicator])
-    # merge repo code hash with existing subfield code hash
-    subfields_hsh.merge!(process_repo_code)
-    datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
-    datafield.add_datafield_tag
-  end
+  #   subfields_hsh = {}
+  #   datafield_hsh = get_datafield_hash('949','0','')
+  #   # have to have a hash by position as the key
+  #   # since the subfield positions matter
+  #   subfields_hsh[1] = get_subfield_hash('a','NNU')
+  #   subfields_hsh[4] = get_subfield_hash('t','4')
+  #   subfields_hsh[5] = generate_subfield_j
+  #   subfields_hsh[6] = get_subfield_hash('m','MIXED')
+  #   subfields_hsh[7] = get_subfield_hash('i','04')
+  #   subfields_hsh[8] = get_location(info[:location])
+  #   subfields_hsh[9] = get_subfield_hash('p',info[:barcode]) if info[:barcode]
+  #   subfields_hsh[10] = get_subfield_hash('w',"Box #{info[:indicator]}")
+  #   subfields_hsh[11] = get_subfield_hash('e',info[:indicator])
+  #   # merge repo code hash with existing subfield code hash
+  #   subfields_hsh.merge!(process_repo_code)
+  #   datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
+  #   datafield.add_datafield_tag
+  # end
 
-  def get_repo_org_code
-    @record.aspace_record['repository']['_resolved']['org_code']
-  end
+  # def get_repo_org_code
+  #   @record.aspace_record['repository']['_resolved']['org_code']
+  # end
 
-  def get_record_repo_value
-    code = @record.aspace_record['repository']['_resolved']['repo_code']
-    code
-  end
+  # def get_record_repo_value
+  #   code = @record.aspace_record['repository']['_resolved']['repo_code']
+  #   code
+  # end
 
-  def get_allowed_values
-    allowed_values = {}
-    allowed_values['tamwag'] = { b: 'BTAM', c: 'TAM' }
-    allowed_values['fales'] = { b: 'BFALE', c: 'FALES'}
-    allowed_values['archives'] = { b: 'BARCH', c: 'MAIN' }
-    allowed_values['Poly Archives'] = { b: 'NDIBN', c: 'ARCH'}
-    allowed_values
-  end
+  # def get_allowed_values
+  #   allowed_values = {}
+  #   allowed_values['tamwag'] = { b: 'BTAM', c: 'TAM' }
+  #   allowed_values['fales'] = { b: 'BFALE', c: 'FALES'}
+  #   allowed_values['archives'] = { b: 'BARCH', c: 'MAIN' }
+  #   allowed_values['Poly Archives'] = { b: 'NDIBN', c: 'ARCH'}
+  #   allowed_values
+  # end
 
   def get_repo_code_values
     repo_code = nil
@@ -297,13 +310,13 @@ class BoulderMARCSerializer
     get_subfield_hash('j',id)
   end
 
-  def location_hsh
-    {
-        "Clancy Cullen [Offsite]" => "DM",
-        "Bern Dibner Library [Offsite Prep]" => "ON",
-        "Bobst [Offsite Prep]" => "ON"
-    }
-  end
+  # def location_hsh
+  #   {
+  #       "Clancy Cullen [Offsite]" => "DM",
+  #       "Bern Dibner Library [Offsite Prep]" => "ON",
+  #       "Bobst [Offsite Prep]" => "ON"
+  #   }
+  # end
 
   def get_location(location_info)
     loc_hsh = location_hsh
