@@ -296,6 +296,18 @@ class MARCModel < ASpaceExport::ExportModel
                 #   when 'accessrestrict'
                 #     ind1 = note['publish'] ? '1' : '0'
                 #     ['506', '0', ' ', 'a']
+            when 'accessrestrict'
+                ind1 = note['publish'] ? '1' : '0'
+                subfield_text = if ind1 == '1'
+                                  'Collection is open for research use.'
+                                else
+                                  'Access is restricted.'
+                                end
+                ['506', ind1, ' ', 'a', subfield_text]
+              
+              
+              
+                  
                   # when 'scopecontent'
                   #   ['520', '3', ' ', 'a']
                   when 'abstract'
