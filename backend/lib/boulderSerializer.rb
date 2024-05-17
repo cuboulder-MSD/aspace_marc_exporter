@@ -34,7 +34,7 @@ class BoulderMARCSerializer
     # extra_fields << add_024_tag
     # extra_fields << add_035_tag
     extra_fields << add_043_tag
-    # extra_fields << add_506_tag
+    extra_fields << add_506_tag
     extra_fields << add_655_tag
     extra_fields << add_710_tag
     
@@ -159,26 +159,29 @@ class BoulderMARCSerializer
 
 
 
-#   def add_506_tag
-#     restrictions_apply = @record.aspace_record['restrictions_apply']
+  def add_506_tag
+    restrictions_apply = @record.aspace_record['restrictions_apply']
+    stringv = restrictions_apply.to_s
     
-#     restrictions_text = restrictions_apply ? "Collection is open for research use." : "Collection is restricted."
-#     subfields_hsh = {}
-#     datafield_hsh = get_datafield_hash('506','0',' ')
-#     subfields_hsh[1] = get_subfield_hash('a', restrictions_text)
-#     datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
-#     datafield.add_datafield_tag
-# end
+    # restrictions_text = restrictions_apply ? "Collection is open for research use." : "Collection is restricted."
+    subfields_hsh = {}
+    datafield_hsh = get_datafield_hash('506','0',' ')
+    subfields_hsh[1] = get_subfield_hash('a', stringv)
+    datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
+    datafield.add_datafield_tag
+end
 
 # def add_506_tag
 #   restrictions_apply = @record.aspace_record['restrictions_apply']
   
-#   if restrictions_apply == 'false'
+#   if restrictions_apply == 'False'
 #       indicator_value = '1' # If restrictions apply is false, set indicator value to 1
-#       restrictions_text = "Collection is open for research use."
-#   else
+#       restrictions_text = "OPEN."
+#   elsif restrictions_apply == 'True'
 #       indicator_value = '0' # If restrictions apply is true or nil, set indicator value to 0
-#       restrictions_text = "Collection is restricted."
+#       restrictions_text = "CLOSED."
+#   elsif restrictions_apply.nil?
+#     restrictions_text = 'NIL'
 #   end
   
 #   subfields_hsh = {}
