@@ -285,29 +285,15 @@ class MARCModel < ASpaceExport::ExportModel
                 else; nil
                 end
   
-      marc_args = case note['type']
-  
-                #   when 'arrangement', 'fileplan'
-                #     ['351', 'a']
-                #   when 'odd', 'dimensions', 'physdesc', 'materialspec', 'physloc', 'phystech', 'physfacet', 'processinfo', 'separatedmaterial'
-                #     ['500','a']
+                marc_args = case note['type']
+                    #   when 'arrangement', 'fileplan'
+                    #     ['351', 'a']
+                    #   when 'odd', 'dimensions', 'physdesc', 'materialspec', 'physloc', 'phystech', 'physfacet', 'processinfo', 'separatedmaterial'
+                    #     ['500','a']
                     # when 'odd', 'dimensions', 'materialspec', 'phystech', 'physfacet', 'processinfo', 'separatedmaterial'
-              #     ['500','a']
-                #   when 'accessrestrict'
-                #     ind1 = note['publish'] ? '1' : '0'
-                #     ['506', '0', ' ', 'a']
-            when 'accessrestrict'
-                ind1 = note['publish'] ? '1' : '0'
-                subfield_text = if ind1 == '1'
-                                  'Collection is open for research use.'
-                                else
-                                  'Access is restricted.'
-                                end
-                ['506', ind1, ' ', 'a', subfield_text]
-              
-              
-              
-                  
+                    #     ['500','a']
+                    # when 'accessrestrict'
+                    #     ['506','a']  
                   # when 'scopecontent'
                   #   ['520', '3', ' ', 'a']
                   when 'abstract'
@@ -319,7 +305,7 @@ class MARCModel < ASpaceExport::ExportModel
                     ['541', ind1, ' ', 'a']
                   when 'relatedmaterial'
                     ind1 = note['publish'] ? '1' : '0'
-                    ['544',ind1, ' ', 'a']
+                    ['544', ind1, ' ', 'a']
                   # when 'bioghist'
                   #     ['545',ind1,' ','a']
                   when 'custodhist'
@@ -343,6 +329,7 @@ class MARCModel < ASpaceExport::ExportModel
                   else
                     nil
                   end
+                  
   
       unless marc_args.nil?
         text = prefix ? "#{prefix}: " : ""
