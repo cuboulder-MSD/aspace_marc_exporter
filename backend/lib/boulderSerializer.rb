@@ -34,7 +34,7 @@ class BoulderMARCSerializer
     # extra_fields << add_024_tag
     # extra_fields << add_035_tag
     extra_fields << add_043_tag
-    extra_fields << add_506_tag
+    # extra_fields << add_506_tag
     extra_fields << add_655_tag
     extra_fields << add_710_tag
     
@@ -159,17 +159,17 @@ class BoulderMARCSerializer
 
 
 
-  def add_506_tag
-    restrictions_apply = @record.aspace_record['restrictions_apply']
-    stringv = restrictions_apply.to_s
+#   def add_506_tag
+#     restrictions_apply = @record.aspace_record['restrictions_apply']
+#     stringv = restrictions_apply.to_s
     
-    # restrictions_text = restrictions_apply ? "Collection is open for research use." : "Collection is restricted."
-    subfields_hsh = {}
-    datafield_hsh = get_datafield_hash('506','0',' ')
-    subfields_hsh[1] = get_subfield_hash('a', stringv)
-    datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
-    datafield.add_datafield_tag
-end
+#     # restrictions_text = restrictions_apply ? "Collection is open for research use." : "Collection is restricted."
+#     subfields_hsh = {}
+#     datafield_hsh = get_datafield_hash('506','0',' ')
+#     subfields_hsh[1] = get_subfield_hash('a', stringv)
+#     datafield = BoulderCustomTag.new(datafield_hsh,subfields_hsh)
+#     datafield.add_datafield_tag
+# end
 
 # def add_506_tag
 #   restrictions_apply = @record.aspace_record['restrictions_apply']
