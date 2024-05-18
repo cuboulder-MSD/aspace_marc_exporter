@@ -292,8 +292,8 @@ class MARCModel < ASpaceExport::ExportModel
                     #     ['500','a']
                     # when 'odd', 'dimensions', 'materialspec', 'phystech', 'physfacet', 'processinfo', 'separatedmaterial'
                     #     ['500','a']
-                    # when 'accessrestrict'
-                    #     ['506','a']  
+                    when 'accessrestrict'
+                        ['506','a']  
                   # when 'scopecontent'
                   #   ['520', '3', ' ', 'a']
                   when 'abstract'
