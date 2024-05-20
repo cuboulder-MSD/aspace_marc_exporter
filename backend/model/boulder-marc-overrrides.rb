@@ -228,45 +228,170 @@ class MARCModel < ASpaceExport::ExportModel
     ids.reject!{|i| i.nil? || i.empty? }
     df('099', ' ', '9').with_sfs(['a', ids.join('.')])
   end
-  
-  def handle_primary_creator(linked_agents)
-    link = linked_agents.find{|a| a['role'] == 'creator'}
-    return nil unless link
-    return nil unless link["_resolved"]["publish"] || @include_unpublished
 
-    creator = link['_resolved']
-    name = creator['display_name']
+  ###
 
-    ind2 = ' '
+#   def handle_primary_creator(linked_agents)
+#     link = linked_agents.find{|a| a['role'] == 'creator'}
+#     return nil unless link
+#     return nil unless link["_resolved"]["publish"] || @include_unpublished
 
-    relator_sfs = []
-    if link['relator']
-      handle_relators(relator_sfs, link['relator'])
-    else
-      relator_sfs << ['e', 'creator']
-    end
+#     creator = link['_resolved']
+#     name = creator['display_name']
 
-    case creator['agent_type']
+#     ind2 = ' '
 
-    when 'agent_corporate_entity'
-      code = '110'
-      ind1 = '2'
-      sfs = gather_agent_corporate_subfield_mappings(name, relator_sfs, creator)
+#     relator_sfs = []
+#     if link['relator']
+#       handle_relators(relator_sfs, link['relator'])
+#     else
+#       relator_sfs << ['e', 'creator']
+#     end
 
-    when 'agent_person'
-      ind1  = name['name_order'] == 'direct' ? '0' : '1'
-      code = '100'
-      sfs = gather_agent_person_subfield_mappings(name, relator_sfs, creator)
+#     case creator['agent_type']
 
-    when 'agent_family'
-      code = '100'
-      ind1 = '3'
-      sfs = gather_agent_family_subfield_mappings(name, relator_sfs, creator)
+#     when 'agent_corporate_entity'
+#       code = '110'
+#       ind1 = '2'
+#       sfs = gather_agent_corporate_subfield_mappings(name, relator_sfs, creator)
 
-    end
+#     when 'agent_person'
+#       ind1  = name['name_order'] == 'direct' ? '0' : '1'
+#       code = '100'
+#       sfs = gather_agent_person_subfield_mappings(name, relator_sfs, creator)
 
-    df(code, ind1, ind2).with_sfs(*sfs)
-  end
+#     when 'agent_family'
+#       code = '100'
+#       ind1 = '3'
+#       sfs = gather_agent_family_subfield_mappings(name, relator_sfs, creator)
+
+#     end
+
+#     df(code, ind1, ind2).with_sfs(*sfs)
+#   end
+
+#   def handle_other_creators(linked_agents)
+#     creators = linked_agents.select {|a| a['role'] == 'creator'}[1..-1] || []
+#     creators = creators + linked_agents.select {|a| a['role'] == 'source'}
+
+#     creators.each_with_index do |link, i|
+#       next unless link["_resolved"]["publish"] || @include_unpublished
+
+#       creator = link['_resolved']
+#       name = creator['display_name']
+#       role = link['role']
+
+#       relator_sfs = []
+#       if link['relator']
+#         handle_relators(relator_sfs, link['relator'])
+#       elsif role == 'source'
+#         relator_sfs << ['e', 'former owner']
+#       else
+#         relator_sfs << ['e', 'creator']
+#       end
+
+#       ind2 = ' '
+
+#       case creator['agent_type']
+
+#       when 'agent_corporate_entity'
+#         code = '710'
+#         ind1 = '2'
+#         sfs = gather_agent_corporate_subfield_mappings(name, relator_sfs, creator)
+
+#       when 'agent_person'
+#         ind1  = name['name_order'] == 'direct' ? '0' : '1'
+#         code = '700'
+#         sfs = gather_agent_person_subfield_mappings(name, relator_sfs, creator)
+
+#       when 'agent_family'
+#         ind1 = '3'
+#         code = '700'
+#         sfs = gather_agent_family_subfield_mappings(name, relator_sfs, creator)
+
+#       end
+
+#       df(code, ind1, ind2, i).with_sfs(*sfs)
+#     end
+#   end
+
+#   def handle_agents(linked_agents)
+#     handle_primary_creator(linked_agents)
+#     handle_other_creators(linked_agents)
+
+#     subjects = linked_agents.select {|a| a['role'] == 'subject'}
+
+#     subjects.each_with_index do |link, i|
+#       subject = link['_resolved']
+#       name = subject['display_name']
+#       relator = link['relator']
+#       terms = link['terms']
+#       ind2 = source_to_code(name['source'])
+
+#       relator_sfs = []
+#       if link['relator']
+#         handle_relators(relator_sfs, link['relator'])
+#       end
+
+#       case subject['agent_type']
+
+#       when 'agent_corporate_entity'
+#         code = '610'
+#         ind1 = '2'
+#         sfs = [
+#           ['a', name['primary_name']],
+#           ['b', name['subordinate_name_1']],
+#           ['b', name['subordinate_name_2']],
+#           ['n', name['number']],
+#           ['g', name['qualifier']],
+#         ]
+
+#       when 'agent_person'
+#         joint, ind1 = name['name_order'] == 'direct' ? [' ', '0'] : [', ', '1']
+#         name_parts = [name['primary_name'], name['rest_of_name']].reject{|i| i.nil? || i.empty?}.join(joint)
+#         ind1 = name['name_order'] == 'direct' ? '0' : '1'
+#         code = '600'
+#         sfs = [
+#           ['a', name_parts],
+#           ['b', name['number']],
+#           ['c', %w(prefix title suffix).map {|prt| name[prt]}.compact.join(', ')],
+#           ['q', name['fuller_form']],
+#           ['d', name['dates']],
+#           ['g', name['qualifier']],
+#         ]
+
+#       when 'agent_family'
+#         code = '600'
+#         ind1 = '3'
+#         sfs = [
+#           ['a', name['family_name']],
+#           ['c', name['prefix']],
+#           ['d', name['dates']],
+#           ['g', name['qualifier']],
+#         ]
+
+#       end
+
+#       terms.each do |t|
+#         tag = case t['term_type']
+#               when 'uniform_title'; 't'
+#               when 'genre_form', 'style_period'; 'v'
+#               when 'topical', 'cultural_context'; 'x'
+#               when 'temporal'; 'y'
+#               when 'geographic'; 'z'
+#               end
+#         sfs << [(tag), t['term']]
+#       end
+
+#       if ind2 == '7'
+#         create_sfs2 = %w(local ingest)
+#         sfs << ['2', 'local'] if create_sfs2.include?(subject['display_name']['source'])
+#       end
+
+#       df(code, ind1, ind2, i).with_sfs(*sfs)
+#     end
+#   end
+
 
   
   def handle_notes(notes)
@@ -292,8 +417,9 @@ class MARCModel < ASpaceExport::ExportModel
                     #     ['500','a']
                     # when 'odd', 'dimensions', 'materialspec', 'phystech', 'physfacet', 'processinfo', 'separatedmaterial'
                     #     ['500','a']
-                    when 'accessrestrict'
-                        ['506','a']  
+                    
+                    # when 'accessrestrict'
+                    #     ['506','a']  
                   # when 'scopecontent'
                   #   ['520', '3', ' ', 'a']
                   when 'abstract'
