@@ -338,6 +338,7 @@ end
   #   }
   # end
 
+  
   def get_location(location_info)
     loc_hsh = location_hsh
     # if location is one of the keys in location_hash,
