@@ -98,13 +98,27 @@ class MARCModel < ASpaceExport::ExportModel
         df('245', ind1, '0').with_sfs(['a', title])
       end
     end
-  #   def handle_ark(ark_name)
-  #     if ark_name.empty?
-  #         df('856', '4', '2').with_sfs(
-  #                                     ['z', 'Finding aid (via ArchivesSpace)'],
-  #                                     ['u', ark_name]
-  #         )
-  #     end 
+  
+
+    def handle_ark(id, type='resource')
+      # If ARKs are enabled, add an 856
+      #<datafield tag="856" ind1="4" ind2="2">
+      #  <subfield code="z">Archival Resource Key:</subfield>
+      #  <subfield code="u">ARK URL</subfield>
+      #</datafield>
+      # if AppConfig[:arks_enabled]
+      #   ark_url = ArkName::get_ark_url(id, type.to_sym)
+      #   df('856', '4', '2').with_sfs(
+      #     ['z', "Archival Resource Key:"],
+      #     ['u', ark_url]
+      #   ) unless ark_url.nil? || ark_url.empty?
+  
+      end
+    end
+  
+  
+  
+  
   
     def handle_ead_loc(ead_loc, ead_uri)
       if ead_loc && !ead_loc.empty?
@@ -469,5 +483,5 @@ class MARCModel < ASpaceExport::ExportModel
   
     end
   end
-  end
+  
   
