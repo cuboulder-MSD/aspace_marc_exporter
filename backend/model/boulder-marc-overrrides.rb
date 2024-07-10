@@ -112,7 +112,7 @@ class MARCModel < ASpaceExport::ExportModel
 
     if ark_url = ark_name['current']
       df('856', '4', '2').with_sfs(
-        ['z', "Finding Aid Online:"],
+        ['z', "Finding Aid (via ArchivesSpace)"],
         ['u', ark_url]
       ) unless ark_url.nil? || ark_url.empty?
 
